@@ -17,13 +17,16 @@ function Welcome() {
   );
 }
 
-function Team({ school, name, city, state }: Team) {
+function TeamCard({ school, name, city, state }: Team) {
   return (
-    <tr>
-      <td style={{ border: '1px solid black', padding: '8px' }}>{school}</td>
-      <td style={{ border: '1px solid black', padding: '8px' }}>{name}</td>
-      <td style={{ border: '1px solid black', padding: '8px' }}>{city}, {state}</td>
-    </tr>
+    <div style={cardStyle as React.CSSProperties}>
+      <h2 style={headerStyle}>
+        {school} {name}
+      </h2>
+      <p style={locationStyle}>
+        {city}, {state}
+      </p>
+    </div>
   );
 }
 
@@ -38,26 +41,11 @@ function TeamList() {
   }, []);
 
   return (
-    <table
-      style={{
-        borderCollapse: 'collapse',
-        width: '100%',
-        border: '1px solid black',
-      }}
-    >
-      <thead>
-        <tr>
-          <th style={{ border: '1px solid black', padding: '8px' }}>School Name</th>
-          <th style={{ border: '1px solid black', padding: '8px' }}>Mascot</th>
-          <th style={{ border: '1px solid black', padding: '8px' }}>Location</th>
-        </tr>
-      </thead>
-      <tbody>
-        {teamNames.map((singleTeam) => (
-          <Team key={singleTeam.name} {...singleTeam} />
-        ))}
-      </tbody>
-    </table>
+    <div style={teamListStyle as React.CSSProperties}>
+      {teamNames.map((singleTeam) => (
+        <TeamCard key={singleTeam.name} {...singleTeam} />
+      ))}
+    </div>
   );
 }
 
@@ -69,5 +57,37 @@ function App() {
     </>
   );
 }
+
+// Styles for card layout
+const teamListStyle = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '20px',
+  justifyContent: 'center',
+};
+
+const cardStyle = {
+  border: '1px solid black',
+  borderRadius: '8px',
+  padding: '20px',
+  width: '200px',
+  textAlign: 'center',
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-start', // Ensures the card doesn't have extra space
+};
+
+const headerStyle = {
+  flexGrow: 1, // Allows the header to expand and take available space
+  marginBottom: '10px', // Space between name and location
+  overflow: 'hidden', // Prevents overflow of text
+  textOverflow: 'ellipsis', // Adds ellipsis if the text is too long
+  whiteSpace: 'normal', // Allows text wrapping
+};
+
+const locationStyle = {
+  marginTop: 'auto', // Keeps the city/state at the bottom
+};
 
 export default App;
