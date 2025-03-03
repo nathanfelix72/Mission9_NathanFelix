@@ -1,11 +1,15 @@
 import './App.css';
 import { useState, useEffect } from 'react';
+import { LatLngExpression, icon } from 'leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 interface Team {
   school: string;
   name: string;
   city: string;
   state: string;
+  latitude: number;
+  longitude: number;
 }
 
 function Welcome() {
@@ -49,11 +53,58 @@ function TeamList() {
   );
 }
 
+// New Map component
+function Map({ teamNames }: { teamNames: Team[] }) {
+  return (
+    <div style={{ height: '100vh', width: '100%' }}>
+      <br></br>
+      <MapContainer
+        center={[37.0902, -95.7129]}
+        zoom={4}
+        style={{ height: '100%', width: '100%' }}
+      >
+        <TileLayer
+          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        {teamNames.map((team) => (
+          <Marker
+            key={team.name}
+            position={[team.latitude, team.longitude] as LatLngExpression}
+            icon={icon({
+              iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon.png',
+              iconSize: [8, 8],
+              iconAnchor: [4, 4],
+              popupAnchor: [0, -10],
+            })}
+          >
+            <Popup>
+              <strong>{team.school}</strong>
+              <br />
+              {team.city}, {team.state}
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+    </div>
+  );
+}
+
 function App() {
+  const [teamNames, setTeamNames] = useState<Team[]>([]);
+
+  useEffect(() => {
+    fetch('/CollegeBasketballTeams.json')
+      .then((response) => response.json())
+      .then((data) => setTeamNames(data.teams))
+      .catch((error) => console.error('Error fetching teams:', error));
+  }, []);
+
   return (
     <>
       <Welcome />
       <TeamList />
+      <Map teamNames={teamNames} />
     </>
   );
 }
@@ -75,19 +126,19 @@ const cardStyle = {
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'flex-start', // Ensures the card doesn't have extra space
+  justifyContent: 'flex-start',
 };
 
 const headerStyle = {
-  flexGrow: 1, // Allows the header to expand and take available space
-  marginBottom: '10px', // Space between name and location
-  overflow: 'hidden', // Prevents overflow of text
-  textOverflow: 'ellipsis', // Adds ellipsis if the text is too long
-  whiteSpace: 'normal', // Allows text wrapping
+  flexGrow: 1,
+  marginBottom: '10px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'normal',
 };
 
 const locationStyle = {
-  marginTop: 'auto', // Keeps the city/state at the bottom
+  marginTop: 'auto',
 };
 
 export default App;
