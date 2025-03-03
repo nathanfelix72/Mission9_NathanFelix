@@ -53,7 +53,6 @@ function TeamList() {
   );
 }
 
-// New Map component
 function Map({ teamNames }: { teamNames: Team[] }) {
   return (
     <div style={{ height: '100vh', width: '100%' }}>
@@ -109,7 +108,6 @@ function App() {
   );
 }
 
-// Styles for card layout
 const teamListStyle = {
   display: 'flex',
   flexWrap: 'wrap',
